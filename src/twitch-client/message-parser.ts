@@ -15,11 +15,14 @@ type Command = {
   botCommandParams?: string;
 };
 
+type TwitchMessageSource = {
+  nick: string | null;
+  host: string | null;
+}
+
 export type TwitchMessage = {
   tags: any;
-  source: {
-    nick: string;
-  } | null;
+  source: TwitchMessageSource | null;
   command: Command | null;
   parameters: any;
 };
@@ -284,7 +287,7 @@ function parseCommand(rawCommandComponent: string): Command | null {
 
 // Parses the source (nick and host) components of the IRC message.
 
-function parseSource(rawSourceComponent: string) {
+function parseSource(rawSourceComponent: string): TwitchMessageSource | null {
   if (null == rawSourceComponent) {
     // Not all messages contain a source
     return null;
