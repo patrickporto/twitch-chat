@@ -94,7 +94,7 @@ export class TwitchClient {
   private onNotice(message: TwitchMessage) {
     debug("Received notice from Twitch IRC", message);
     this.emit(TwitchCommand.NOTICE, message);
-    this.client?.send(`PART ${this.channel}`);
+    this.client?.send(`PART #${this.channel}`);
   }
 
   private onPart(message: TwitchMessage) {
@@ -142,6 +142,6 @@ export class TwitchClient {
       throw new Error("Client is not connected");
     }
     debug("Sending private message to Twitch IRC", message);
-    this.client.send(`PRIVMSG ${this.channel} :${message}`);
+    this.client.send(`PRIVMSG #${this.channel} :${message}`);
   }
 }
