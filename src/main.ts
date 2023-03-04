@@ -38,7 +38,7 @@ Hooks.once("chatCommandsReady", function(chatCommands: any) {
     invokeOnCommand: (chatlog: ChatLog, messageText: string, chatdata: any) => {
       twitchChat.sendMessage(chatlog, messageText, chatdata);
     },
-    shouldDisplayToChat: false,
+    shouldDisplayToChat: true,
     iconClass: "fa-messages",
     description: (game as Game).i18n.localize("TWITCHCHAT.ChatCommandSendMsgToTwitch"),
     gmOnly: false
