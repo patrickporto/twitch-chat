@@ -1,9 +1,21 @@
-import "./styles.css"
+import "./styles.css";
+import { debug, registerDebugSettings } from "./debug";
+import { TwitchClient } from "./twitch-client/client";
+import { TwitchNoticeNotification } from "./notice-notification";
+import { TwitchClientSettings } from "./twitch-client/settings";
 
-Hooks.on("init", function() {
-    console.log("This code runs once the Foundry VTT software begins its initialization workflow.");
+let settings: TwitchClientSettings;
+let client: TwitchClient;
+let twitchNoticeNotification: TwitchNoticeNotification
+
+Hooks.on("init", function () {
+  settings = new TwitchClientSettings()
+  registerDebugSettings()
+  twitchNoticeNotification = new TwitchNoticeNotification(client);
 });
 
-Hooks.on("ready", function() {
-    console.log("This code runs once core initialization is ready and game data is available.");
+Hooks.on("ready", async function () {
+  client = new TwitchClient(settings.channel, settings.username, settings.oauthToken);
+  client.connect();
 });
+

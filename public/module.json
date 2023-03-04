@@ -6,7 +6,7 @@
         "verified": "10",
         "maximum": "10"
     },
-    "title": "twitch-chat",
+    "title": "Twitch Chat",
     "description": "A Foundry VTT system.",
     "authors": [
         {
@@ -15,6 +15,7 @@
             "discord": "patrickporto#9260"
         }
     ],
+    "socket": true,
     "languages": [
         {
             "lang": "en",
