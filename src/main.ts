@@ -31,3 +31,16 @@ Hooks.once("ready", async function () {
   twitchChat = new TwitchChat(client);
   client.connect();
 });
+
+Hooks.once("chatCommandsReady", function(chatCommands: any) {
+  chatCommands.registerCommand(chatCommands.createCommandFromData({
+    commandKey: "/twitch",
+    invokeOnCommand: (chatlog: ChatLog, messageText: string, chatdata: any) => {
+      twitchChat.sendMessage(chatlog, messageText, chatdata);
+    },
+    shouldDisplayToChat: false,
+    iconClass: "fa-messages",
+    description: (game as Game).i18n.localize("TWITCHCHAT.ChatCommandSendMsgToTwitch"),
+    gmOnly: false
+  }));
+})

@@ -15,7 +15,11 @@ export class TwitchChat {
     debug("Chat message received", message);
     ChatMessage.create({
       content: message.parameters,
-      speaker: ChatMessage.getSpeaker({ alias: message?.source?.nick }),
+      speaker: ChatMessage.getSpeaker({ alias: message?.source?.nick ?? MODULE_NAME }),
     });
+  }
+
+  public async sendMessage(chatlog: ChatLog, messageText: string, chatdata: any) {
+    this.twitchClient.sendPrivateMessage(messageText);
   }
 }
