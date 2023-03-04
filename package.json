@@ -1,0 +1,19 @@
+{
+    "name": "twitch-chat",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "build": "vite build",
+        "build:config": "iron build",
+        "build:watch": "vite build --watch",
+        "postversion": "npm run postversion:update-module-version && npm run postversion:update-module-manifest && npm run postversion:update-module-download",
+        "postversion:update-module-version": "jq '.version = \"'${npm_package_version}'\"' ./public/module.json > ./public/module.json.tmp && mv ./public/module.json.tmp ./public/module.json",
+        "postversion:update-module-manifest": "jq '.manifest = \"https://github.com/patrickporto/twitch-chat/releases/download/'${npm_package_version}'/module.json\"' ./public/module.json > ./public/module.json.tmp && mv ./public/module.json.tmp ./public/module.json",
+        "postversion:update-module-download": "jq '.download = \"https://github.com/patrickporto/twitch-chat/releases/download/'${npm_package_version}'/twitch-chat.zip\"' ./public/module.json > ./public/module.json.tmp && mv ./public/module.json.tmp ./public/module.json"
+    },
+    "devDependencies": {
+        "@league-of-foundry-developers/foundry-vtt-types": "git://github.com/League-of-Foundry-Developers/foundry-vtt-types.git#main",
+        "typescript": "^4.9.4",
+        "vite": "^4.1.4"
+    }
+}

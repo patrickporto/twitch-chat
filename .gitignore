@@ -1,0 +1,4 @@
+node_modules/
+dist/
+ironconfig.json
+.vscode/launch.json
