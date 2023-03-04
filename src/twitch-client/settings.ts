@@ -1,5 +1,4 @@
 import { CANONICAL_NAME } from "../constants";
-import { debug } from "../debug";
 
 export class TwitchClientSettings {
   constructor() {
