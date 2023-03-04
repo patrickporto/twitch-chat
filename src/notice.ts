@@ -1,8 +1,9 @@
 import { MODULE_NAME, TwitchCommand } from "./constants";
+import { debug } from "./debug";
 import { TwitchClient } from "./twitch-client/client";
 import { TwitchMessage } from "./twitch-client/message-parser";
 
-export class TwitchNoticeNotification {
+export class TwitchNotice {
     constructor(private readonly twitchClient: TwitchClient) {
         this.twitchClient.on(TwitchCommand.NOTICE, this.onNotice.bind(this));
     }

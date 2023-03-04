@@ -26,6 +26,7 @@ export class TwitchClient {
     this.client = new WebSocket("ws://irc-ws.chat.twitch.tv:80");
     this.client.addEventListener("open", this.onConnect.bind(this));
     this.client.addEventListener("close", this.onClose.bind(this));
+    this.client.addEventListener("error", this.onError.bind(this));
     this.client.addEventListener("message", this.onMessage.bind(this));
   }
 
@@ -34,11 +35,15 @@ export class TwitchClient {
   }
 
   emit(command: TwitchCommand, message: TwitchMessage) {
-    debug("Emitting event", command, message);
     for (const callback of this.events[command]) {
       callback(message);
     }
   }
+
+  private onError(error: any) {
+    debug("Connection Error: ", error.toString());
+  }
+
   private onClose() {
     debug("Connection closed");
     this.client = null;
@@ -55,7 +60,10 @@ export class TwitchClient {
 
   private onMessage({ data: ircMessage }: MessageEvent) {
     debug("Received message from Twitch IRC", ircMessage);
-    const messages = ircMessage.split("\r\n").map(parseMessage).filter(Boolean) as TwitchMessage[];
+    const messages = ircMessage
+      .split("\r\n")
+      .map(parseMessage)
+      .filter(Boolean) as TwitchMessage[];
     debug("Parsed messages", messages);
     for (const message of messages) {
       if (message.command?.command === TwitchCommand.PING) {
@@ -109,7 +117,7 @@ export class TwitchClient {
     }
     debug("Joined channel");
     this.emit(TwitchCommand.JOIN, message);
-    this.sendPrivateMessage("Hello, world!");
+    // this.sendPrivateMessage("Hello, world!");
   }
 
   private onPing(message: TwitchMessage) {
@@ -131,7 +139,7 @@ export class TwitchClient {
 
   public sendPrivateMessage(message: string) {
     if (!this.client) {
-        throw new Error("Client is not connected");
+      throw new Error("Client is not connected");
     }
     debug("Sending private message to Twitch IRC", message);
     this.client.send(`PRIVMSG ${this.channel} :${message}`);

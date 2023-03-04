@@ -17,7 +17,9 @@ type Command = {
 
 export type TwitchMessage = {
   tags: any;
-  source: any;
+  source: {
+    nick: string;
+  } | null;
   command: Command | null;
   parameters: any;
 };
