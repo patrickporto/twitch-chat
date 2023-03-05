@@ -1,5 +1,6 @@
 import { TwitchChat } from "./chat";
 import { debug } from "./debug";
+import { getUsetData } from "./twitch-client/user";
 
 export interface Daum {
   id: string;
@@ -48,18 +49,38 @@ export class TwitchEmotes {
     return response.json();
   }
 
+  private async getChannelEmotes(): Promise<TwitchEmote> {
+    debug("Getting channel emotes");
+    const user = await getUsetData(this.oauthToken, this.clientId);
+    const response = await fetch(
+      `https://api.twitch.tv/helix/chat/emotes/global?broadcaster_id=${user.id}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: "Bearer " + this.oauthToken.replace("oauth:", ""),
+          "Client-Id": this.clientId,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.json();
+  }
+
+
   public async load() {
-    const emotes = await this.getGlobalEmotes()
-    for(const emote of emotes.data) {
+    const globalEmotes = await this.getGlobalEmotes()
+    for(const emote of globalEmotes.data) {
+      this.emotes[emote.name] = emote.images.url_1x
+    }
+    const channelEmotes = await this.getChannelEmotes()
+    for(const emote of channelEmotes.data) {
       this.emotes[emote.name] = emote.images.url_1x
     }
   }
 
   preprocessChatMessage(message: string): string {
-    debug("Preprocessing chat message", message.split(" "));
-    debug("Emotes", this.emotes)
+    debug("Preprocessing chat message", message.split(" "), this.emotes);
     message.split(" ").forEach((word) => {
-        debug(word, this.emotes[word])
         if (word in this.emotes) {
             message = message.replace(word, `<img src="${this.emotes[word]}" class="twitch-chat-emote" />`)
         }
