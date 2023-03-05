@@ -87,16 +87,31 @@ export class TwitchChatSettings {
             },
         });
 
-        (game as Game).settings.register(CANONICAL_NAME, "messageBorderColor", {
-            name: (game as Game).i18n.localize("TWITCHCHAT.MessageBorderColor"),
-            hint: (game as Game).i18n.localize(
-                "TWITCHCHAT.MessageBorderColorHint"
-            ),
-            scope: "world",
-            config: true,
-            type: String,
-            default: "#6441a5",
-        });
+        if ((game as Game).modules.get("color-picker")?.active) {
+            // @ts-ignore
+            ColorPicker.register(CANONICAL_NAME, "messageBorderColor", {
+                name: (game as Game).i18n.localize("TWITCHCHAT.MessageBorderColor"),
+                hint: (game as Game).i18n.localize(
+                    "TWITCHCHAT.MessageBorderColorHint"
+                ),
+                scope: "world",
+                config: true,
+                default: "#6441a5",
+            }, {
+                format: 'hexa'
+            })
+        } else {
+            (game as Game).settings.register(CANONICAL_NAME, "messageBorderColor", {
+                name: (game as Game).i18n.localize("TWITCHCHAT.MessageBorderColor"),
+                hint: (game as Game).i18n.localize(
+                    "TWITCHCHAT.MessageBorderColorHint"
+                ),
+                scope: "world",
+                config: true,
+                type: String,
+                default: "#6441a5",
+            });
+        }
     }
 
     public get messageStyle(): MessageStyle {
