@@ -1,4 +1,10 @@
-import { MODULE_NAME, TwitchCommand } from "./constants";
+import { ChatMessageData } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/module.mjs";
+import {
+    CANONICAL_NAME,
+    MessageStyle,
+    MODULE_NAME,
+    TwitchCommand,
+} from "./constants";
 import { debug } from "./debug";
 import { TwitchClient } from "./twitch-client/client";
 import { TwitchMessage } from "./twitch-client/message-parser";
@@ -6,35 +12,104 @@ import { TwitchMessage } from "./twitch-client/message-parser";
 type Preprocessor = (message: string) => string;
 
 export class TwitchChat {
-  private preprocessors: Preprocessor[] = [];
+    private preprocessors: Preprocessor[] = [];
 
-  constructor(private readonly twitchClient: TwitchClient) {
-    this.twitchClient.on(
-      TwitchCommand.PRIVATE_MESSAGE,
-      this.onMessage.bind(this)
-    );
-  }
-
-  private onMessage(message: TwitchMessage) {
-    debug("Chat message received", message);
-    ChatMessage.create({
-      content: this.preprocess(message.parameters),
-      speaker: ChatMessage.getSpeaker({ alias: message?.source?.nick ?? MODULE_NAME }),
-    });
-  }
-
-  private preprocess(message: string) {
-    for (const preprocessor of this.preprocessors) {
-      message = preprocessor(message);
+    constructor(
+        private readonly twitchClient: TwitchClient,
+        private readonly settings: TwitchChatSettings
+    ) {
+        this.twitchClient.on(
+            TwitchCommand.PRIVATE_MESSAGE,
+            this.onMessage.bind(this)
+        );
     }
-    return message;
-  }
 
-  public addPreprocessor(preprocessor: Preprocessor) {
-    this.preprocessors.push(preprocessor);
-  }
+    private onMessage(message: TwitchMessage) {
+        debug("Chat message received", message);
+        const data: Partial<ChatMessageData> = {
+            content: this.preprocess(message.parameters),
+            flags: {
+                [CANONICAL_NAME]: {
+                    speaker: message.source?.nick,
+                },
+            },
+        };
+        if (this.settings.messageStyle === MessageStyle.USERNAME_AS_FLAVOR) {
+            // @ts-ignore
+            data.speaker = ChatMessage.getSpeaker({ alias: MODULE_NAME });
+            data.flavor = message.source?.nick ?? "";
+        } else {
+            // @ts-ignore
+            data.speaker = ChatMessage.getSpeaker({
+                alias: message?.source?.nick ?? MODULE_NAME,
+            });
+        }
+        ChatMessage.create(data);
+    }
 
-  public async sendMessage(chatlog: ChatLog, messageText: string, chatdata: any) {
-    this.twitchClient.sendPrivateMessage(messageText);
-  }
+    private preprocess(message: string) {
+        for (const preprocessor of this.preprocessors) {
+            message = preprocessor(message);
+        }
+        return message;
+    }
+
+    public addPreprocessor(preprocessor: Preprocessor) {
+        this.preprocessors.push(preprocessor);
+    }
+
+    public async sendMessage(
+        chatlog: ChatLog,
+        messageText: string,
+        chatdata: any
+    ) {
+        this.twitchClient.sendPrivateMessage(messageText);
+    }
+}
+
+export class TwitchChatSettings {
+    constructor() {
+        (game as Game).settings.register(CANONICAL_NAME, "messageStyle", {
+            name: (game as Game).i18n.localize("TWITCHCHAT.MessageStyle"),
+            hint: (game as Game).i18n.localize("TWITCHCHAT.MessageStyleHint"),
+            scope: "world",
+            config: true,
+            type: String,
+            default: MessageStyle.USERNAME_AS_ALIAS,
+            // @ts-ignore
+            choices: {
+                [MessageStyle.USERNAME_AS_ALIAS]: (game as Game).i18n.localize(
+                    "TWITCHCHAT.MessageStyleUsernameAsAlias"
+                ),
+                [MessageStyle.USERNAME_AS_FLAVOR]: (game as Game).i18n.localize(
+                    "TWITCHCHAT.MessageStyleUsernameAsFlavor"
+                ),
+            },
+        });
+
+        (game as Game).settings.register(CANONICAL_NAME, "messageBorderColor", {
+            name: (game as Game).i18n.localize("TWITCHCHAT.MessageBorderColor"),
+            hint: (game as Game).i18n.localize(
+                "TWITCHCHAT.MessageBorderColorHint"
+            ),
+            scope: "world",
+            config: true,
+            type: String,
+            default: "#6441a5",
+        });
+    }
+
+    public get messageStyle(): MessageStyle {
+        return (game as Game).settings.get(
+            CANONICAL_NAME,
+            "messageStyle"
+        ) as MessageStyle;
+    }
+
+    public get messageBorderColor(): string {
+        return (game as Game).settings.get(
+            CANONICAL_NAME,
+            "messageBorderColor"
+        ) as string;
+    }
 }

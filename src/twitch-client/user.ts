@@ -11,11 +11,17 @@ export interface TwitchUser {
   created_at: string;
 }
 
-export const getUsetData = async (
+export const getUserData = async (
   oauthToken: string,
-  clientId: string
+  clientId: string,
+  login?: string
 ): Promise<TwitchUser> => {
-  const response = await fetch(`https://api.twitch.tv/helix/users`, {
+    const url = `https://api.twitch.tv/helix/users?`;
+    const params = new URLSearchParams();
+    if (login) {
+        params.append('login', login);
+    }
+  const response = await fetch(url + params.toString(), {
     headers: {
       Authorization: "Bearer " + oauthToken.replace("oauth:", ""),
       "Client-ID": clientId,
@@ -23,5 +29,8 @@ export const getUsetData = async (
   });
 
   const { data } = await response.json();
+  if (Array.isArray(data)) {
+    return data[0] as TwitchUser;
+  }
   return data as TwitchUser;
-};
+}

@@ -9,5 +9,9 @@
     "TWITCHCHAT.FoundryUserHint": "The Foundry user to receive/send Twitch messages.",
     "TWITCHCHAT.ChatCommandSendMsgToTwitch": "Send message to Twitch",
     "TWITCHCHAT.ShowTwitchEmotes": "Show Twitch Emotes",
-    "TWITCHCHAT.ShowTwitchEmotesHint": "Show Twitch emotes in chat messages."
+    "TWITCHCHAT.ShowTwitchEmotesHint": "Show Twitch emotes in chat messages.",
+    "TWITCHCHAT.MessageStyle": "Twitch Message Style",
+    "TWITCHCHAT.MessageStyleHint": "The style of show Twitch messages in Foundry chat",
+    "TWITCHCHAT.MessageStyleUsernameAsAlias": "Username as Alias",
+    "TWITCHCHAT.MessageStyleUsernameAsFlavor": "Username as Flavor"
 }

@@ -10,3 +10,8 @@ export enum TwitchCommand {
     PART = 'PART',
     NOTICE = 'NOTICE',
 }
+
+export enum MessageStyle {
+    USERNAME_AS_ALIAS = 'USERNAME_AS_ALIAS',
+    USERNAME_AS_FLAVOR = 'USERNAME_AS_FLAVOR',
+}

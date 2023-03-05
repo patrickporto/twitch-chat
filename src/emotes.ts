@@ -1,6 +1,6 @@
 import { TwitchChat } from "./chat";
 import { debug } from "./debug";
-import { getUsetData } from "./twitch-client/user";
+import { getUserData } from "./twitch-client/user";
 
 export interface Daum {
   id: string;
@@ -51,7 +51,7 @@ export class TwitchEmotes {
 
   private async getChannelEmotes(): Promise<TwitchEmote> {
     debug("Getting channel emotes");
-    const user = await getUsetData(this.oauthToken, this.clientId);
+    const user = await getUserData(this.oauthToken, this.clientId);
     const response = await fetch(
       `https://api.twitch.tv/helix/chat/emotes/global?broadcaster_id=${user.id}`,
       {
