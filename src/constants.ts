@@ -15,3 +15,7 @@ export enum MessageStyle {
     USERNAME_AS_ALIAS = 'USERNAME_AS_ALIAS',
     USERNAME_AS_FLAVOR = 'USERNAME_AS_FLAVOR',
 }
+
+export enum TwitchChatEvent {
+    SEND_MESSAGE = 'SEND_MESSAGE',
+}

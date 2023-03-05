@@ -6,7 +6,7 @@ import { TwitchClientSettings } from "./twitch-client/settings";
 import { TwitchChat, TwitchChatSettings } from "./chat";
 import { TwitchUserSettings } from "./user";
 import { TwitchEmotes } from "./emotes";
-import { CANONICAL_NAME, MessageStyle } from "./constants";
+import { CANONICAL_NAME, MessageStyle, TwitchChatEvent } from "./constants";
 import { ChatMessageData } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs";
 import { getUserData } from "./twitch-client/user";
 
@@ -47,10 +47,21 @@ Hooks.once("ready", async function () {
         );
         await twitchEmojis.load();
     }
+    const socket = (game as Game).socket;
+    socket?.on(
+        `module.${CANONICAL_NAME}`,
+        ({ type, payload }: {type: TwitchChatEvent, payload: any}) => {
+            if (type === TwitchChatEvent.SEND_MESSAGE) {
+                debug("Socket message received", payload);
+                twitchChat.sendMessage(payload.chatlog, payload.messageText, payload.chatdata);
+            }
+        }
+    );
     client.connect();
 });
 
 Hooks.once("chatCommandsReady", function (chatCommands: any) {
+    const socket = (game as Game).socket;
     chatCommands.registerCommand(
         chatCommands.createCommandFromData({
             commandKey: "/twitch",
@@ -59,7 +70,15 @@ Hooks.once("chatCommandsReady", function (chatCommands: any) {
                 messageText: string,
                 chatdata: any
             ) => {
-                twitchChat.sendMessage(chatlog, messageText, chatdata);
+                socket?.emit(
+                    `module.${CANONICAL_NAME}`,{
+                        type: TwitchChatEvent.SEND_MESSAGE,
+                        payload: {
+                            chatlog,
+                            messageText,
+                            chatdata
+                        }
+                });
             },
             shouldDisplayToChat: true,
             iconClass: "fa-messages",
