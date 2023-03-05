@@ -33,8 +33,11 @@ Hooks.once("ready", async function () {
   );
   twitchNoticeNotification = new TwitchNotice(client);
   twitchChat = new TwitchChat(client);
-  twitchEmojis = new TwitchEmotes(clientSettings.oauthToken, TWITCH_CHAT_OAUTH_CLIENT_ID, twitchChat);
-  await twitchEmojis.load();
+  if (clientSettings.showTwitchEmotes) {
+      twitchEmojis = new TwitchEmotes(clientSettings.oauthToken, TWITCH_CHAT_OAUTH_CLIENT_ID, twitchChat);
+      await twitchEmojis.load();
+
+  }
   client.connect();
 });
 

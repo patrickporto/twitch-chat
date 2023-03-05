@@ -7,3 +7,5 @@ TWITCHCHAT.TwitchOAuthTokenHint: "The OAuth token of the Twitch account to conne
 TWITCHCHAT.FoundryUser: "Foundry User"
 TWITCHCHAT.FoundryUserHint: "The Foundry user to receive/send Twitch messages."
 TWITCHCHAT.ChatCommandSendMsgToTwitch: "Send message to Twitch"
+TWITCHCHAT.ShowTwitchEmotes: "Show Twitch Emotes"
+TWITCHCHAT.ShowTwitchEmotesHint: "Show Twitch emotes in chat messages."
