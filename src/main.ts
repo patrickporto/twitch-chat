@@ -64,7 +64,7 @@ Hooks.once("chatCommandsReady", function (chatCommands: any) {
     const socket = (game as Game).socket;
     chatCommands.registerCommand(
         chatCommands.createCommandFromData({
-            commandKey: "/twitch",
+            commandKey: "/t",
             invokeOnCommand: (
                 chatlog: ChatLog,
                 messageText: string,

@@ -18,4 +18,4 @@ This module allows you to connect your Foundry VTT server to a Twitch chat chann
 
 ## Chat Commands
 
-* **/twitch**: Sends a message to the Twitch chat.
+* **/t**: Sends a message to the Twitch chat.
