@@ -1,1 +1,4 @@
-* {}
+.message-content img.twitch-chat-emote {
+    border: none;
+    vertical-align: bottom;
+}

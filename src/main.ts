@@ -5,12 +5,16 @@ import { TwitchNotice } from "./notice";
 import { TwitchClientSettings } from "./twitch-client/settings";
 import { TwitchChat } from "./chat";
 import { TwitchUserSettings } from "./user";
+import { TwitchEmotes } from "./emotes";
+
+const TWITCH_CHAT_OAUTH_CLIENT_ID = 'q6batx0epp608isickayubi39itsckt'
 
 let clientSettings: TwitchClientSettings;
 let userSettings: TwitchUserSettings;
 let client: TwitchClient;
 let twitchNoticeNotification: TwitchNotice;
 let twitchChat: TwitchChat;
+let twitchEmojis: TwitchEmotes;
 
 Hooks.on("init", function () {
   clientSettings = new TwitchClientSettings();
@@ -29,18 +33,28 @@ Hooks.once("ready", async function () {
   );
   twitchNoticeNotification = new TwitchNotice(client);
   twitchChat = new TwitchChat(client);
+  twitchEmojis = new TwitchEmotes(clientSettings.oauthToken, TWITCH_CHAT_OAUTH_CLIENT_ID, twitchChat);
+  await twitchEmojis.load();
   client.connect();
 });
 
-Hooks.once("chatCommandsReady", function(chatCommands: any) {
-  chatCommands.registerCommand(chatCommands.createCommandFromData({
-    commandKey: "/twitch",
-    invokeOnCommand: (chatlog: ChatLog, messageText: string, chatdata: any) => {
-      twitchChat.sendMessage(chatlog, messageText, chatdata);
-    },
-    shouldDisplayToChat: true,
-    iconClass: "fa-messages",
-    description: (game as Game).i18n.localize("TWITCHCHAT.ChatCommandSendMsgToTwitch"),
-    gmOnly: false
-  }));
-})
+Hooks.once("chatCommandsReady", function (chatCommands: any) {
+  chatCommands.registerCommand(
+    chatCommands.createCommandFromData({
+      commandKey: "/twitch",
+      invokeOnCommand: (
+        chatlog: ChatLog,
+        messageText: string,
+        chatdata: any
+      ) => {
+        twitchChat.sendMessage(chatlog, messageText, chatdata);
+      },
+      shouldDisplayToChat: true,
+      iconClass: "fa-messages",
+      description: (game as Game).i18n.localize(
+        "TWITCHCHAT.ChatCommandSendMsgToTwitch"
+      ),
+      gmOnly: false,
+    })
+  );
+});
