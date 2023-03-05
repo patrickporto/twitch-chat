@@ -42,6 +42,7 @@ Hooks.once("ready", async function () {
         twitchEmojis = new TwitchEmotes(
             clientSettings.oauthToken,
             TWITCH_CHAT_OAUTH_CLIENT_ID,
+            clientSettings.username,
             twitchChat
         );
         await twitchEmojis.load();

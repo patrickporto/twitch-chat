@@ -28,6 +28,7 @@ export class TwitchEmotes {
   constructor(
     private readonly oauthToken: string,
     private readonly clientId: string,
+    private readonly username: string,
     twitchChat: TwitchChat
   ) {
     twitchChat.addPreprocessor(this.preprocessChatMessage.bind(this));
@@ -51,7 +52,7 @@ export class TwitchEmotes {
 
   private async getChannelEmotes(): Promise<TwitchEmote> {
     debug("Getting channel emotes");
-    const user = await getUserData(this.oauthToken, this.clientId);
+    const user = await getUserData(this.oauthToken, this.clientId, this.username);
     const response = await fetch(
       `https://api.twitch.tv/helix/chat/emotes/global?broadcaster_id=${user.id}`,
       {
