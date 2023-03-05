@@ -18,7 +18,7 @@ type Command = {
 type TwitchMessageSource = {
   nick: string | null;
   host: string | null;
-}
+};
 
 export type TwitchMessage = {
   tags: any;
@@ -277,8 +277,10 @@ function parseCommand(rawCommandComponent: string): Command | null {
     case "376":
       debug(`numeric message: ${commandParts[0]}`);
       return null;
+    case "":
+      return null;
     default:
-      debug(`\nUnexpected command: ${commandParts[0]}\n`);
+      debug("Unexpected command:", commandParts);
       return null;
   }
 
