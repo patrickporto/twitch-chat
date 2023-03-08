@@ -4,7 +4,6 @@ import { TwitchClient } from "./twitch-client/client";
 import { TwitchNotice } from "./notice";
 import { TwitchClientSettings } from "./twitch-client/settings";
 import { TwitchChat, TwitchChatSettings } from "./chat";
-import { TwitchUserSettings } from "./user";
 import { TwitchEmotes } from "./emotes";
 import { CANONICAL_NAME, MessageStyle, TwitchChatEvent } from "./constants";
 import { ChatMessageData } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs";
@@ -13,7 +12,6 @@ import { getUserData } from "./twitch-client/user";
 const TWITCH_CHAT_OAUTH_CLIENT_ID = "q6batx0epp608isickayubi39itsckt";
 
 let clientSettings: TwitchClientSettings;
-let userSettings: TwitchUserSettings;
 let client: TwitchClient;
 let twitchNoticeNotification: TwitchNotice;
 let twitchChat: TwitchChat;
@@ -28,10 +26,6 @@ Hooks.on("init", function () {
 });
 
 Hooks.once("ready", async function () {
-    userSettings = new TwitchUserSettings();
-    if ((game as Game).userId !== userSettings.twitchUserId) {
-        return;
-    }
     client = new TwitchClient(
         clientSettings.channel,
         clientSettings.username,
