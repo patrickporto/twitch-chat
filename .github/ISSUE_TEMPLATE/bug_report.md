@@ -27,7 +27,6 @@ If applicable, add screenshots to help explain your problem.
  - Foundry VTT: [e.g. v10]
  - Browser [e.g. chrome, brave]
  - Module Version [e.g. 1.0.1]
- - A/V Client [e.g. Livekit, SimplePeer (default)]
 
 ## Additional context:
 
