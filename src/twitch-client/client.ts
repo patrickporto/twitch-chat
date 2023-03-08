@@ -6,6 +6,7 @@ import { parseMessage, TwitchMessage } from "./message-parser";
 export enum TwitchConnectionEvent {
     ERROR = "ERROR",
     CONNECT = "CONNECT",
+    CONNECTING = "CONNECTING",
     CLOSE = "CLOSE",
 }
 
@@ -25,6 +26,7 @@ export class TwitchClient {
         [TwitchConnectionEvent.ERROR]: [],
         [TwitchConnectionEvent.CONNECT]: [],
         [TwitchConnectionEvent.CLOSE]: [],
+        [TwitchConnectionEvent.CONNECTING]: [],
     };
 
     constructor(
@@ -42,6 +44,7 @@ export class TwitchClient {
 
     connect() {
         debug("Connecting to Twitch IRC");
+        this.emit(TwitchConnectionEvent.CONNECTING);
         this.client = new WebSocket(this.ircURL);
         this.client.addEventListener("open", this.onConnect.bind(this));
         this.client.addEventListener("close", this.onClose.bind(this));
@@ -68,6 +71,9 @@ export class TwitchClient {
         debug("Connection closed");
         this.client = null;
         this.emit(TwitchConnectionEvent.CLOSE);
+        setTimeout(() => {
+            this.connect();
+        }, 1000);
     }
 
     private onConnect() {

@@ -12,6 +12,11 @@ export class TwitchNotice {
         this.twitchClient.on(TwitchConnectionEvent.ERROR, this.onError.bind(this));
         this.twitchClient.on(TwitchConnectionEvent.CLOSE, this.onClose.bind(this));
         this.twitchClient.on(TwitchConnectionEvent.CONNECT, this.onConnect.bind(this));
+        this.twitchClient.on(TwitchConnectionEvent.CONNECTING, this.onConnecting.bind(this));
+    }
+
+    private onConnecting() {
+        (ui as any).notifications.info(`${MODULE_NAME}: Connecting to Twitch IRC.`);
     }
 
     private onConnect() {
