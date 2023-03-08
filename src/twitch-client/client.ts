@@ -2,17 +2,29 @@ import { TwitchCommand } from "../constants";
 import { debug } from "../debug";
 import { parseMessage, TwitchMessage } from "./message-parser";
 
-type TwitchCommandCallback = (message: TwitchMessage) => void;
+
+export enum TwitchConnectionEvent {
+    ERROR = "ERROR",
+    CONNECT = "CONNECT",
+    CLOSE = "CLOSE",
+}
+
+export type TwitchEvent = TwitchCommand | TwitchConnectionEvent;
+
+type TwitchCommandCallback = (message?: TwitchMessage) => void;
 
 export class TwitchClient {
     private client: WebSocket | null = null;
-    private events: Record<TwitchCommand, TwitchCommandCallback[]> = {
+    private events: Record<TwitchEvent, TwitchCommandCallback[]> = {
         [TwitchCommand.PRIVATE_MESSAGE]: [],
         [TwitchCommand.PING]: [],
         [TwitchCommand.SUCCESSFULLY_LOGGED_IN]: [],
         [TwitchCommand.JOIN]: [],
         [TwitchCommand.PART]: [],
         [TwitchCommand.NOTICE]: [],
+        [TwitchConnectionEvent.ERROR]: [],
+        [TwitchConnectionEvent.CONNECT]: [],
+        [TwitchConnectionEvent.CLOSE]: [],
     };
 
     constructor(
@@ -37,11 +49,11 @@ export class TwitchClient {
         this.client.addEventListener("message", this.onMessage.bind(this));
     }
 
-    on(command: TwitchCommand, callback: TwitchCommandCallback) {
+    on(command: TwitchEvent, callback: TwitchCommandCallback) {
         this.events[command].push(callback);
     }
 
-    emit(command: TwitchCommand, message: TwitchMessage) {
+    emit(command: TwitchEvent, message?: TwitchMessage) {
         for (const callback of this.events[command]) {
             callback(message);
         }
@@ -49,11 +61,13 @@ export class TwitchClient {
 
     private onError(error: any) {
         debug("Connection Error: ", error.toString());
+        this.emit(TwitchConnectionEvent.ERROR, error);
     }
 
     private onClose() {
         debug("Connection closed");
         this.client = null;
+        this.emit(TwitchConnectionEvent.CLOSE);
     }
 
     private onConnect() {
@@ -61,6 +75,7 @@ export class TwitchClient {
             return;
         }
         debug("Connected to Twitch IRC");
+        this.emit(TwitchConnectionEvent.CONNECT);
         this.client.send(`PASS ${this.oauth.trim()}`);
         this.client.send(`NICK ${this.account.toLocaleLowerCase().trim()}`);
     }
