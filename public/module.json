@@ -40,6 +40,11 @@
       "name": "_chatcommands",
       "type": "module",
       "manifest": "https://github.com/League-of-Foundry-Developers/Chat-Commands-Lib/releases/download/1.2.0/module.json"
+    },
+    {
+      "name": "socketlib",
+      "type": "module",
+      "manifest": "https://raw.githubusercontent.com/manuelVo/foundryvtt-socketlib/v1.0.12/module.json"
     }
   ]
 }

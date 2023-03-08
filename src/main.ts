@@ -19,6 +19,7 @@ let twitchNoticeNotification: TwitchNotice;
 let twitchChat: TwitchChat;
 let twitchEmojis: TwitchEmotes;
 let twitchChatSettings: TwitchChatSettings;
+let socket: any;
 
 Hooks.on("init", function () {
     clientSettings = new TwitchClientSettings();
@@ -47,21 +48,23 @@ Hooks.once("ready", async function () {
         );
         await twitchEmojis.load();
     }
-    const socket = (game as Game).socket;
-    socket?.on(
-        `module.${CANONICAL_NAME}`,
-        ({ type, payload }: {type: TwitchChatEvent, payload: any}) => {
-            if (type === TwitchChatEvent.SEND_MESSAGE) {
-                debug("Socket message received", payload);
-                twitchChat.sendMessage(payload.chatlog, payload.messageText, payload.chatdata);
-            }
-        }
-    );
     client.connect();
 });
 
+Hooks.once("socketlib.ready", () => {
+    // @ts-ignore
+    socket = socketlib.registerModule(CANONICAL_NAME);
+    socket.register(TwitchChatEvent.SEND_MESSAGE, (payload: any) => {
+        debug("Socket message received", payload);
+        twitchChat.sendMessage(
+            payload.chatlog,
+            payload.messageText,
+            payload.chatdata
+        );
+    });
+});
+
 Hooks.once("chatCommandsReady", function (chatCommands: any) {
-    const socket = (game as Game).socket;
     chatCommands.registerCommand(
         chatCommands.createCommandFromData({
             commandKey: "/t",
@@ -70,14 +73,10 @@ Hooks.once("chatCommandsReady", function (chatCommands: any) {
                 messageText: string,
                 chatdata: any
             ) => {
-                socket?.emit(
-                    `module.${CANONICAL_NAME}`,{
-                        type: TwitchChatEvent.SEND_MESSAGE,
-                        payload: {
-                            chatlog,
-                            messageText,
-                            chatdata
-                        }
+                socket.executeForEveryone(TwitchChatEvent.SEND_MESSAGE, {
+                    chatlog,
+                    messageText,
+                    chatdata,
                 });
             },
             shouldDisplayToChat: true,
