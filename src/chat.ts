@@ -3,6 +3,7 @@ import {
     CANONICAL_NAME,
     MessageStyle,
     MODULE_NAME,
+    TwitchChatEvent,
     TwitchCommand,
 } from "./constants";
 import { debug } from "./debug";
@@ -16,15 +17,32 @@ export class TwitchChat {
 
     constructor(
         private readonly twitchClient: TwitchClient,
-        private readonly settings: TwitchChatSettings
+        private readonly settings: TwitchChatSettings,
+        private readonly socket: any
     ) {
         this.twitchClient.on(
             TwitchCommand.PRIVATE_MESSAGE,
             this.onMessage.bind(this)
         );
+        this.socket.register(TwitchChatEvent.MESSAGE_RECEIVED, this.sendChatMessage.bind(this));
+        this.socket.register(TwitchChatEvent.SEND_MESSAGE, (payload: any) => {
+            debug("Socket message received", payload);
+            this.sendMessage(
+                payload.chatlog,
+                payload.messageText,
+                payload.chatdata
+            );
+        });
     }
 
-    private onMessage(message: TwitchMessage) {
+    private onMessage(message?: TwitchMessage) {
+        if (!message) {
+            throw new Error("Message is undefined");
+        }
+        this.socket.executeAsGM(TwitchChatEvent.MESSAGE_RECEIVED, message)
+    }
+
+    private sendChatMessage(message: TwitchMessage) {
         debug("Chat message received", message);
         const data: Partial<ChatMessageData> = {
             content: this.preprocess(message.parameters),

@@ -25,6 +25,11 @@ Hooks.on("init", function () {
     registerDebugSettings();
 });
 
+Hooks.once("socketlib.ready", () => {
+    // @ts-ignore
+    socket = socketlib.registerModule(CANONICAL_NAME);
+});
+
 Hooks.once("ready", async function () {
     client = new TwitchClient(
         clientSettings.channel,
@@ -32,7 +37,7 @@ Hooks.once("ready", async function () {
         clientSettings.oauthToken
     );
     twitchNoticeNotification = new TwitchNotice(client);
-    twitchChat = new TwitchChat(client, twitchChatSettings);
+    twitchChat = new TwitchChat(client, twitchChatSettings, socket);
     if (clientSettings.showTwitchEmotes) {
         twitchEmojis = new TwitchEmotes(
             clientSettings.oauthToken,
@@ -45,19 +50,6 @@ Hooks.once("ready", async function () {
     client.connect();
 });
 
-Hooks.once("socketlib.ready", () => {
-    // @ts-ignore
-    socket = socketlib.registerModule(CANONICAL_NAME);
-    socket.register(TwitchChatEvent.SEND_MESSAGE, (payload: any) => {
-        debug("Socket message received", payload);
-        twitchChat.sendMessage(
-            payload.chatlog,
-            payload.messageText,
-            payload.chatdata
-        );
-    });
-});
-
 Hooks.once("chatCommandsReady", function (chatCommands: any) {
     chatCommands.registerCommand(
         chatCommands.createCommandFromData({
@@ -67,13 +59,13 @@ Hooks.once("chatCommandsReady", function (chatCommands: any) {
                 messageText: string,
                 chatdata: any
             ) => {
-                socket.executeForEveryone(TwitchChatEvent.SEND_MESSAGE, {
+                socket.executeAsGM(TwitchChatEvent.SEND_MESSAGE, {
                     chatlog,
                     messageText,
                     chatdata,
                 });
             },
-            shouldDisplayToChat: true,
+            shouldDisplayToChat: false,
             iconClass: "fa-messages",
             description: (game as Game).i18n.localize(
                 "TWITCHCHAT.ChatCommandSendMsgToTwitch"

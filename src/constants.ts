@@ -18,4 +18,5 @@ export enum MessageStyle {
 
 export enum TwitchChatEvent {
     SEND_MESSAGE = 'SEND_MESSAGE',
+    MESSAGE_RECEIVED = 'MESSAGE_RECEIVED',
 }
