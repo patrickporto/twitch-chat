@@ -1,6 +1,6 @@
 {
   "id": "twitch-chat",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "compatibility": {
     "minimum": "10",
     "verified": "10",
@@ -30,8 +30,8 @@
   ],
   "socket": true,
   "url": "https://github.com/patrickporto/twitch-chat",
-  "manifest": "https://github.com/patrickporto/twitch-chat/releases/download/1.0.2/module.json",
-  "download": "https://github.com/patrickporto/twitch-chat/releases/download/1.0.2/twitch-chat.zip",
+  "manifest": "https://github.com/patrickporto/twitch-chat/releases/download/1.0.3/module.json",
+  "download": "https://github.com/patrickporto/twitch-chat/releases/download/1.0.3/twitch-chat.zip",
   "readme": "https://github.com/patrickporto/twitch-chat/blob/main/README.md",
   "changelog": "https://github.com/patrickporto/twitch-chat/releases",
   "bugs": "https://github.com/patrickporto/twitch-chat/issues",
