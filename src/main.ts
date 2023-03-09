@@ -31,6 +31,16 @@ Hooks.once("socketlib.ready", () => {
 });
 
 Hooks.once("ready", async function () {
+    if (!(game as Game).user?.isGM) {
+        debug("Not a GM, skipping");
+        return
+    }
+    const users = ((game as Game).users as Users).filter(user => user.isGM && user.active)
+    if (users.length > 1 && users[0]?.id !== (game as Game).user?.id) {
+        debug("Another GM is active, skipping");
+        (ui as any).notifications?.warn("Another GM is active, skipping");
+        return
+    }
     client = new TwitchClient(
         clientSettings.channel,
         clientSettings.username,
