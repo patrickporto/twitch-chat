@@ -179,7 +179,9 @@ export class TwitchClient {
         if (!this.client) {
             throw new Error("Client is not connected");
         }
-        this.client.send(`JOIN #${this.channel}`);
+        const normalizedChannel = "#" + this.channel.toLocaleLowerCase().trim();
+        debug(`Joining channel ${normalizedChannel} on Twitch IRC`);
+        this.client.send(`JOIN ${normalizedChannel}`);
     }
 
     public sendPrivateMessage(message: string) {
