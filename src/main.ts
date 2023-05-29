@@ -1,5 +1,5 @@
 import "./styles.css";
-import { debug, registerDebugSettings } from "./debug";
+import { debug, isEnableConnectionNotices, registerDebugSettings } from "./debug";
 import { TwitchClient } from "./twitch-client/client";
 import { TwitchNotice } from "./notice";
 import { TwitchClientSettings } from "./twitch-client/settings";
@@ -46,7 +46,9 @@ Hooks.once("ready", async function () {
         clientSettings.username,
         clientSettings.oauthToken
     );
-    twitchNoticeNotification = new TwitchNotice(client);
+    if (isEnableConnectionNotices()) {
+        twitchNoticeNotification = new TwitchNotice(client);
+    }
     twitchChat = new TwitchChat(client, twitchChatSettings, socket);
     if (clientSettings.showTwitchEmotes) {
         twitchEmojis = new TwitchEmotes(
