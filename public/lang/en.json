@@ -13,5 +13,9 @@
     "TWITCHCHAT.MessageStyleUsernameAsAlias": "Username as Alias",
     "TWITCHCHAT.MessageStyleUsernameAsFlavor": "Username as Flavor",
     "TWITCHCHAT.MessageBorderColor": "Message Border Color",
-    "TWITCHCHAT.MessageBorderColorHint": "The border color of Twitch messages in Foundry chat"
+    "TWITCHCHAT.MessageBorderColorHint": "The border color of Twitch messages in Foundry chat",
+    "TWITCHCHAT.DebugMode": "Enable debug logging",
+    "TWITCHCHAT.DebugModeHint": "Enable debug logging to the console",
+    "TWITCHCHAT.ConnectionNotices": "Enable connection notices",
+    "TWITCHCHAT.ConnectionNoticesHint": "Enable connection notices to be sent to Foundry"
 }

@@ -7,13 +7,27 @@ export const debug = (...args: any[]) => {
     }
 }
 
+export const isEnableConnectionNotices = (): boolean => {
+    // @ts-ignore
+    return game.settings.get(CANONICAL_NAME, 'connectionNotices');
+}
+
 export const registerDebugSettings = () => {
     (game as Game).settings.register(CANONICAL_NAME, 'debug', {
-        name: 'Debug',
-        hint: 'Enable debug logging',
+        name: (game as Game).i18n.localize(`TWITCHCHAT.DebugMode`),
+        hint: (game as Game).i18n.localize(`TWITCHCHAT.DebugModeHint`),
         scope: 'world',
         config: true,
         type: Boolean,
         default: false,
+    });
+    (game as Game).settings.register(CANONICAL_NAME, 'connectionNotices', {
+        name: (game as Game).i18n.localize(`TWITCHCHAT.ConnectionNotices`),
+        hint: (game as Game).i18n.localize(`TWITCHCHAT.ConnectionNoticesHint`),
+        scope: 'world',
+        config: true,
+        type: Boolean,
+        default: true,
+        requiresReload: true,
     });
 }

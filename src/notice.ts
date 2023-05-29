@@ -1,10 +1,13 @@
 import { MODULE_NAME, TwitchCommand } from "./constants";
-import { debug } from "./debug";
+import { debug, isEnableConnectionNotices } from "./debug";
 import { TwitchClient, TwitchConnectionEvent } from "./twitch-client/client";
 import { TwitchMessage } from "./twitch-client/message-parser";
 
 export class TwitchNotice {
     constructor(private readonly twitchClient: TwitchClient) {
+        if (!isEnableConnectionNotices()) {
+            return
+        }
         this.twitchClient.on(TwitchCommand.NOTICE, this.onNotice.bind(this));
         this.twitchClient.on(TwitchCommand.SUCCESSFULLY_LOGGED_IN, this.onLoginSuccessful.bind(this));
         this.twitchClient.on(TwitchCommand.JOIN, this.onJoin.bind(this));
