@@ -9,6 +9,7 @@ export enum TwitchCommand {
     JOIN = 'JOIN',
     PART = 'PART',
     NOTICE = 'NOTICE',
+    RECONNECT = 'RECONNECT',
 }
 
 export enum MessageStyle {

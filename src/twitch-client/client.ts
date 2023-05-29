@@ -23,6 +23,7 @@ export class TwitchClient {
         [TwitchCommand.JOIN]: [],
         [TwitchCommand.PART]: [],
         [TwitchCommand.NOTICE]: [],
+        [TwitchCommand.RECONNECT]: [],
         [TwitchConnectionEvent.ERROR]: [],
         [TwitchConnectionEvent.CONNECT]: [],
         [TwitchConnectionEvent.CLOSE]: [],
@@ -111,6 +112,8 @@ export class TwitchClient {
                 this.onPart(message);
             } else if (message.command?.command === TwitchCommand.NOTICE) {
                 this.onNotice(message);
+            } else if (message.command?.command === TwitchCommand.RECONNECT) {
+                this.onReconnect(message);
             } else {
                 debug("Unknown message", message);
             }
@@ -159,6 +162,17 @@ export class TwitchClient {
         debug("Sending PONG to Twitch IRC");
         this.emit(TwitchCommand.PING, message);
         this.client.send(`PONG ${message.parameters}`);
+    }
+
+    private onReconnect(message: TwitchMessage) {
+        debug("Received RECONNECT from Twitch IRC", message);
+        if (!this.client) {
+            return;
+        }
+        debug("Reconnecting to Twitch IRC");
+        this.emit(TwitchCommand.RECONNECT, message);
+        this.client.close();
+        this.connect();
     }
 
     public join() {
