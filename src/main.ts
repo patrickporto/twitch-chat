@@ -62,29 +62,26 @@ Hooks.once("ready", async function () {
     client.connect();
 });
 
-Hooks.once("chatCommandsReady", function (chatCommands: any) {
-    chatCommands.registerCommand(
-        chatCommands.createCommandFromData({
-            commandKey: "/t",
-            invokeOnCommand: (
-                chatlog: ChatLog,
-                messageText: string,
-                chatdata: any
-            ) => {
-                socket.executeAsGM(TwitchChatEvent.SEND_MESSAGE, {
-                    chatlog,
-                    messageText,
-                    chatdata,
-                });
-            },
-            shouldDisplayToChat: false,
-            iconClass: "fa-messages",
-            description: (game as Game).i18n.localize(
-                "TWITCHCHAT.ChatCommandSendMsgToTwitch"
-            ),
-            gmOnly: false,
-        })
-    );
+Hooks.once("chatCommandsReady", function (commands: any) {
+    commands.register({
+        name: "/t",
+        module: "twitch-chat",
+        aliases: ["/t", "%"],
+        description: (game as Game).i18n.localize(
+            "TWITCHCHAT.ChatCommandSendMsgToTwitch"
+        ),
+        icon: "<i class='fas fa-messages'></i>",
+        requiredRole: "NONE",
+        callback: (chatlog: ChatLog, messageText: string, chatdata: any) => {
+            socket.executeAsGM(TwitchChatEvent.SEND_MESSAGE, {
+                chatlog,
+                messageText,
+                chatdata,
+            });
+            return { content: messageText }
+        },
+        closeOnComplete: true
+    });
 });
 
 Hooks.on(
