@@ -33,6 +33,9 @@ Hooks.once("socketlib.ready", () => {
 Hooks.once("ready", async function () {
     if (!(game as Game).user?.isGM) {
         debug("Not a GM, skipping");
+        socket.register(TwitchChatEvent.SEND_MESSAGE, () => {
+            (ui as any).notifications?.error("Only GM can send messages to Twitch");
+        })
         return
     }
     const users = ((game as Game).users as Users).filter(user => user.isGM && user.active)
